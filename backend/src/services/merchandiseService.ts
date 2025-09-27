@@ -26,9 +26,10 @@ export class MerchandiseService {
   async getAllMerchandise(options?: {
     available?: boolean;
   }): Promise<Merchandise[]> {
-    const where = options?.available !== undefined 
-      ? { isAvailable: options.available }
-      : {};
+    const where =
+      options?.available !== undefined
+        ? { isAvailable: options.available }
+        : {};
 
     return await prisma.merchandise.findMany({
       where,
@@ -97,7 +98,9 @@ export class MerchandiseService {
     });
   }
 
-  async getAvailableMerchandiseByType(type: MerchandiseType): Promise<Merchandise[]> {
+  async getAvailableMerchandiseByType(
+    type: MerchandiseType
+  ): Promise<Merchandise[]> {
     return await prisma.merchandise.findMany({
       where: {
         type,
@@ -115,7 +118,7 @@ export class MerchandiseService {
     errors: string[];
   }> {
     const errors: string[] = [];
-    
+
     // 商品が存在し、利用可能かチェック
     const merchandise = await prisma.merchandise.findMany({
       where: {
@@ -125,16 +128,18 @@ export class MerchandiseService {
       },
     });
 
-    const foundIds = merchandise.map(m => m.id);
-    const missingIds = merchandiseIds.filter(id => !foundIds.includes(id));
-    
+    const foundIds = merchandise.map((m) => m.id);
+    const missingIds = merchandiseIds.filter((id) => !foundIds.includes(id));
+
     if (missingIds.length > 0) {
       errors.push(`Merchandise not found: ${missingIds.join(', ')}`);
     }
 
-    const unavailableItems = merchandise.filter(m => !m.isAvailable);
+    const unavailableItems = merchandise.filter((m) => !m.isAvailable);
     if (unavailableItems.length > 0) {
-      errors.push(`Unavailable merchandise: ${unavailableItems.map(m => m.name).join(', ')}`);
+      errors.push(
+        `Unavailable merchandise: ${unavailableItems.map((m) => m.name).join(', ')}`
+      );
     }
 
     return {
@@ -156,9 +161,9 @@ export class MerchandiseService {
     });
 
     const errors: string[] = [];
-    const baseItems = merchandise.filter(m => m.type === 'BASE_ITEM');
-    const toppings = merchandise.filter(m => m.type === 'TOPPING');
-    const discounts = merchandise.filter(m => m.type === 'DISCOUNT');
+    const baseItems = merchandise.filter((m) => m.type === 'BASE_ITEM');
+    const toppings = merchandise.filter((m) => m.type === 'TOPPING');
+    const discounts = merchandise.filter((m) => m.type === 'DISCOUNT');
 
     // Rule 1: グループには最大1つのBASE_ITEMのみ
     if (baseItems.length > 1) {
@@ -166,8 +171,13 @@ export class MerchandiseService {
     }
 
     // Rule 2: TOPPINGやDISCOUNTはBASE_ITEMがある場合のみ追加可能
-    if ((toppings.length > 0 || discounts.length > 0) && baseItems.length === 0) {
-      errors.push('TOPPING or DISCOUNT items can only be added to a group that contains a BASE_ITEM');
+    if (
+      (toppings.length > 0 || discounts.length > 0) &&
+      baseItems.length === 0
+    ) {
+      errors.push(
+        'TOPPING or DISCOUNT items can only be added to a group that contains a BASE_ITEM'
+      );
     }
 
     return {

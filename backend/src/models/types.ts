@@ -1,4 +1,9 @@
-import { Prisma, MerchandiseType, OrderStatus, OrderGroupStatus } from '@prisma/client';
+import {
+  Prisma,
+  MerchandiseType,
+  OrderStatus,
+  OrderGroupStatus,
+} from '@prisma/client';
 
 // Base types from Prisma
 export type Merchandise = Prisma.MerchandiseGetPayload<{}>;

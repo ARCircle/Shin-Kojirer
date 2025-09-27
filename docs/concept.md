@@ -79,7 +79,6 @@
 ## 8. 情報設計・データモデル（最小）
 
 - `Order`
-
   - `orderId`（短い連番または Base36 6 桁，場内読み上げしやすい形式）
   - `items[] { skuId, qty, price }`
   - `options { size, noodle, vegetable, oil, spice, ... }`（調理票の項目と一致）
@@ -88,11 +87,9 @@
   - `channel { web }`
 
 - `Menu`
-
   - `skuId, name, price, isAvailable, maxPerOrder`
 
 - `Setting`
-
   - `storeOpen, stockCounts, callSound`
 
 ## 9. 状態遷移

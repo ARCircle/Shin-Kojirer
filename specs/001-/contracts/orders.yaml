@@ -96,7 +96,7 @@ components:
         id: { type: string, format: uuid }
         callNum: { type: integer }
         status: { type: string }
-        groups: 
+        groups:
           type: array
           items:
             $ref: '#/components/schemas/OrderItemGroup'

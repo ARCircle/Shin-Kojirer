@@ -9,11 +9,11 @@ services:
       POSTGRES_USER: developer
       POSTGRES_PASSWORD: development
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U developer -d ordering_system"]
+      test: ['CMD-SHELL', 'pg_isready -U developer -d ordering_system']
       interval: 30s
       timeout: 10s
       retries: 3

@@ -3,6 +3,7 @@
 This guide provides an end-to-end test scenario to validate the core user journey based on the final data model.
 
 ## Prerequisites
+
 - The application server is running.
 - Assumed IDs for this test:
   - Ramen (BASE_ITEM): `merch_ramen_01`
@@ -58,7 +59,7 @@ curl -X POST http://localhost:3000/orders \
     {
       "id": "grp_67890",
       "status": "NOT_READY",
-      "items": [...] 
+      "items": [...]
     }
   ]
 }
@@ -79,5 +80,7 @@ curl -X POST http://localhost:3000/order-item-groups/grp_67890/prepare
 ```
 
 **Verification**: A `GET` request to `/orders/ord_12345` should show the order `status` as `PAID` and the group `status` as `PREPARING`.
+
+```
 
 ```

@@ -28,16 +28,24 @@ export class OrderService {
       }
 
       // グループ内のアイテムのビジネスルール検証
-      const merchandiseIds = group.items.map(item => item.merchandiseId);
-      const groupValidation = await this.merchandiseService.validateGroupItems(merchandiseIds);
+      const merchandiseIds = group.items.map((item) => item.merchandiseId);
+      const groupValidation =
+        await this.merchandiseService.validateGroupItems(merchandiseIds);
       if (!groupValidation.valid) {
-        throw new Error(`Group validation failed: ${groupValidation.errors.join(', ')}`);
+        throw new Error(
+          `Group validation failed: ${groupValidation.errors.join(', ')}`
+        );
       }
 
       // 商品存在・利用可能性検証
-      const merchandiseValidation = await this.merchandiseService.validateMerchandiseForOrder(merchandiseIds);
+      const merchandiseValidation =
+        await this.merchandiseService.validateMerchandiseForOrder(
+          merchandiseIds
+        );
       if (!merchandiseValidation.valid) {
-        throw new Error(`Merchandise validation failed: ${merchandiseValidation.errors.join(', ')}`);
+        throw new Error(
+          `Merchandise validation failed: ${merchandiseValidation.errors.join(', ')}`
+        );
       }
     }
 
@@ -74,7 +82,7 @@ export class OrderService {
       }
 
       // 作成された注文を関連データと共に取得
-      return await tx.order.findUnique({
+      return (await tx.order.findUnique({
         where: { id: order.id },
         include: {
           groups: {
@@ -87,7 +95,7 @@ export class OrderService {
             },
           },
         },
-      }) as OrderWithGroups;
+      })) as OrderWithGroups;
     });
   }
 
@@ -127,11 +135,14 @@ export class OrderService {
     }
 
     await this.updateOrderStatus(id, 'PAID');
-    
+
     return (await this.getOrderById(id))!;
   }
 
-  async updateGroupStatus(groupId: string, status: OrderGroupStatus): Promise<void> {
+  async updateGroupStatus(
+    groupId: string,
+    status: OrderGroupStatus
+  ): Promise<void> {
     const group = await prisma.orderItemGroup.findUnique({
       where: { id: groupId },
     });
@@ -163,7 +174,7 @@ export class OrderService {
     // 今日の最大呼び出し番号を取得
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
@@ -196,8 +207,10 @@ export class OrderService {
     }
 
     // 全てのグループが準備完了した場合
-    const allGroupsReady = order.groups.every(group => group.status === 'READY');
-    
+    const allGroupsReady = order.groups.every(
+      (group) => group.status === 'READY'
+    );
+
     if (allGroupsReady && order.status === 'PAID') {
       await this.updateOrderStatus(orderId, 'READY');
     }
@@ -238,7 +251,7 @@ export class OrderService {
   async getTodaysOrders(): Promise<OrderWithGroups[]> {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
