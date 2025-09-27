@@ -1,19 +1,12 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { testClient } from 'hono/testing';
+import type { Hono } from 'hono';
 import { app } from '../../src/index';
 
 describe('商品API契約テスト', () => {
-  beforeAll(async () => {
-    // テストデータベースのセットアップ
-  });
-
-  afterAll(async () => {
-    // テストデータベースのクリーンアップ
-  });
-
   describe('POST /merchandise', () => {
     it('新しい商品アイテムを作成できること', async () => {
-      const client = testClient(app);
+      const client = testClient(app) as any;
 
       const merchandiseInput = {
         name: '特製ラーメン',
@@ -39,7 +32,7 @@ describe('商品API契約テスト', () => {
     });
 
     it('無効な商品タイプを拒否すること', async () => {
-      const client = testClient(app);
+      const client = testClient(app) as any;
 
       const invalidInput = {
         name: 'Invalid Item',
@@ -56,7 +49,7 @@ describe('商品API契約テスト', () => {
     });
 
     it('割引の負の価格を処理できること', async () => {
-      const client = testClient(app);
+      const client = testClient(app) as any;
 
       const discountInput = {
         name: 'SNS割引',
@@ -79,7 +72,7 @@ describe('商品API契約テスト', () => {
 
   describe('GET /merchandise', () => {
     it('すべての商品アイテムのリストを返すこと', async () => {
-      const client = testClient(app);
+      const client = testClient(app) as any;
 
       const response = await client.merchandise.$get();
 
@@ -102,7 +95,7 @@ describe('商品API契約テスト', () => {
     });
 
     it('商品が存在しない場合は空の配列を返すこと', async () => {
-      const client = testClient(app);
+      const client = testClient(app) as any;
 
       const response = await client.merchandise.$get();
 
@@ -113,7 +106,7 @@ describe('商品API契約テスト', () => {
     });
 
     it('フィルタした場合は利用可能なアイテムのみを返すこと', async () => {
-      const client = testClient(app);
+      const client = testClient(app) as any;
 
       const response = await client.merchandise.$get({
         query: { available: 'true' },
@@ -133,7 +126,7 @@ describe('商品API契約テスト', () => {
 
   describe('POST /merchandise/{merchandiseId}/prices', () => {
     it('既存の商品に新しい価格を設定できること', async () => {
-      const client = testClient(app);
+      const client = testClient(app) as any;
 
       // First create a merchandise item
       const merchandiseInput = {
@@ -165,7 +158,7 @@ describe('商品API契約テスト', () => {
     });
 
     it('存在しない商品の価格更新を拒否すること', async () => {
-      const client = testClient(app);
+      const client = testClient(app) as any;
 
       const priceInput = {
         price: 900,
@@ -181,7 +174,7 @@ describe('商品API契約テスト', () => {
     });
 
     it('割引の負の価格を処理できること', async () => {
-      const client = testClient(app);
+      const client = testClient(app) as any;
 
       // First create a discount merchandise item
       const merchandiseInput = {

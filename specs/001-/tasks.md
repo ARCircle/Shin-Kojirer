@@ -25,14 +25,14 @@
 
 ## Phase 3.3: Backend - Core Implementation
 
-- [X] T014: Set up Prisma ORM and database connection in `backend/`.
-- [X] T015: Create Prisma schema for all tables (`Merchandise`, `Order`, `OrderItemGroup`, `OrderItem`) based on `data-model.md`.
-- [X] T016: Generate Prisma client and run migrations to create the database schema.
-- [X] T017: [P] Implement Prisma-based model types in `backend/src/models/`.
-- [X] T018: Implement `Merchandise` service logic (create, list, set price) in `backend/src/services/merchandiseService.ts`.
-- [X] T019: Implement `Order` service logic (create, get, update status, apply business rules) in `backend/src/services/orderService.ts`.
-- [X] T020: Implement all `Merchandise` API endpoints in `backend/src/api/merchandise.ts`.
-- [X] T021: Implement all `Order` and `OrderItemGroup` API endpoints in `backend/src/api/orders.ts`.
+- [x] T014: Set up Prisma ORM and database connection in `backend/`.
+- [x] T015: Create Prisma schema for all tables (`Merchandise`, `Order`, `OrderItemGroup`, `OrderItem`) based on `data-model.md`.
+- [x] T016: Generate Prisma client and run migrations to create the database schema.
+- [x] T017: [P] Implement Prisma-based model types in `backend/src/models/`.
+- [x] T018: Implement `Merchandise` service logic (create, list, set price) in `backend/src/services/merchandiseService.ts`.
+- [x] T019: Implement `Order` service logic (create, get, update status, apply business rules) in `backend/src/services/orderService.ts`.
+- [x] T020: Implement all `Merchandise` API endpoints in `backend/src/api/merchandise.ts`.
+- [x] T021: Implement all `Order` and `OrderItemGroup` API endpoints in `backend/src/api/orders.ts`.
 
 ## Phase 3.4: Frontend - Core Implementation
 

@@ -44,27 +44,29 @@ app.onError((err, c) => {
   return c.json({ error: 'Internal Server Error' }, 500);
 });
 
-// サーバー起動
-const port = parseInt(process.env.PORT || '3000');
+// サーバー起動（テスト環境では実行しない）
+if (process.env.NODE_ENV !== 'test') {
+  const port = parseInt(process.env.PORT || '3000');
 
-async function startServer() {
-  try {
-    await connectToDatabase();
-    console.log('Database connected successfully');
+  async function startServer() {
+    try {
+      await connectToDatabase();
+      console.log('Database connected successfully');
 
-    serve({
-      fetch: app.fetch,
-      port,
-    });
+      serve({
+        fetch: app.fetch,
+        port,
+      });
 
-    console.log(`Server is running on port ${port}`);
-    console.log(`Health check: http://localhost:${port}/health`);
-  } catch (error) {
-    console.error('Failed to start server:', error);
-    process.exit(1);
+      console.log(`Server is running on port ${port}`);
+      console.log(`Health check: http://localhost:${port}/health`);
+    } catch (error) {
+      console.error('Failed to start server:', error);
+      process.exit(1);
+    }
   }
-}
 
-startServer();
+  startServer();
+}
 
 export { app };

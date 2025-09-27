@@ -1,27 +1,27 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { testClient } from 'hono/testing';
 import { app } from '../../src/index';
+import { createTestMerchandiseSet } from '../helpers';
 
 describe('注文API契約テスト', () => {
-  beforeAll(async () => {
-    // テストデータベースのセットアップ
-  });
+  let testMerchandise: Awaited<ReturnType<typeof createTestMerchandiseSet>>;
 
-  afterAll(async () => {
-    // テストデータベースのクリーンアップ
+  beforeEach(async () => {
+    // グローバルクリーンアップ後にテストデータを作成
+    testMerchandise = await createTestMerchandiseSet();
   });
 
   describe('POST /orders', () => {
     it('1つのグループに複数のアイテムを含む新しい注文を作成できること', async () => {
-      const client = testClient(app);
+      const client = testClient(app) as any;
 
       const orderInput = {
         groups: [
           {
             items: [
-              { merchandiseId: 'merch_ramen_01' },
-              { merchandiseId: 'merch_pork_02' },
-              { merchandiseId: 'merch_discount_03' },
+              { merchandiseId: testMerchandise.ramen.id },
+              { merchandiseId: testMerchandise.pork.id },
+              { merchandiseId: testMerchandise.discount.id },
             ],
           },
         ],
@@ -55,20 +55,20 @@ describe('注文API契約テスト', () => {
     });
 
     it('複数のグループで新しい注文を作成できること', async () => {
-      const client = testClient(app);
+      const client = testClient(app) as any;
 
       const orderInput = {
         groups: [
           {
             items: [
-              { merchandiseId: 'merch_ramen_01' },
-              { merchandiseId: 'merch_pork_02' },
+              { merchandiseId: testMerchandise.ramen.id },
+              { merchandiseId: testMerchandise.pork.id },
             ],
           },
           {
             items: [
-              { merchandiseId: 'merch_ramen_01' },
-              { merchandiseId: 'merch_discount_03' },
+              { merchandiseId: testMerchandise.ramen.id },
+              { merchandiseId: testMerchandise.discount.id },
             ],
           },
         ],
@@ -93,7 +93,7 @@ describe('注文API契約テスト', () => {
     });
 
     it('空の注文を拒否すること', async () => {
-      const client = testClient(app);
+      const client = testClient(app) as any;
 
       const orderInput = {
         groups: [],
@@ -107,7 +107,7 @@ describe('注文API契約テスト', () => {
     });
 
     it('アイテムのないグループを拒否すること', async () => {
-      const client = testClient(app);
+      const client = testClient(app) as any;
 
       const orderInput = {
         groups: [
@@ -125,12 +125,12 @@ describe('注文API契約テスト', () => {
     });
 
     it('連続する呼び出し番号を生成すること', async () => {
-      const client = testClient(app);
+      const client = testClient(app) as any;
 
       const orderInput = {
         groups: [
           {
-            items: [{ merchandiseId: 'merch_ramen_01' }],
+            items: [{ merchandiseId: testMerchandise.ramen.id }],
           },
         ],
       };
@@ -151,15 +151,15 @@ describe('注文API契約テスト', () => {
 
   describe('GET /orders/{orderId}', () => {
     it('すべてのグループとアイテムを含む注文詳細を返すこと', async () => {
-      const client = testClient(app);
+      const client = testClient(app) as any;
 
       // First create an order
       const orderInput = {
         groups: [
           {
             items: [
-              { merchandiseId: 'merch_ramen_01' },
-              { merchandiseId: 'merch_pork_02' },
+              { merchandiseId: testMerchandise.ramen.id },
+              { merchandiseId: testMerchandise.pork.id },
             ],
           },
         ],
@@ -204,7 +204,7 @@ describe('注文API契約テスト', () => {
     });
 
     it('存在しない注文に対して404を返すこと', async () => {
-      const client = testClient(app);
+      const client = testClient(app) as any;
 
       const response = await client.orders[':orderId'].$get({
         param: { orderId: '00000000-0000-0000-0000-000000000000' },
@@ -214,13 +214,13 @@ describe('注文API契約テスト', () => {
     });
 
     it('現在のステータス更新を含む注文を返すこと', async () => {
-      const client = testClient(app);
+      const client = testClient(app) as any;
 
       // Create and pay for an order
       const orderInput = {
         groups: [
           {
-            items: [{ merchandiseId: 'merch_ramen_01' }],
+            items: [{ merchandiseId: testMerchandise.ramen.id }],
           },
         ],
       };
@@ -251,13 +251,13 @@ describe('注文API契約テスト', () => {
 
   describe('POST /orders/{orderId}/pay', () => {
     it('注文を支払い済みとしてマークできること', async () => {
-      const client = testClient(app);
+      const client = testClient(app) as any;
 
       // First create an order
       const orderInput = {
         groups: [
           {
-            items: [{ merchandiseId: 'merch_ramen_01' }],
+            items: [{ merchandiseId: testMerchandise.ramen.id }],
           },
         ],
       };
@@ -290,7 +290,7 @@ describe('注文API契約テスト', () => {
     });
 
     it('存在しない注文に対して404を返すこと', async () => {
-      const client = testClient(app);
+      const client = testClient(app) as any;
 
       const response = await client.orders[':orderId'].pay.$post({
         param: { orderId: '00000000-0000-0000-0000-000000000000' },
@@ -300,13 +300,13 @@ describe('注文API契約テスト', () => {
     });
 
     it('複数の支払い試行を適切に処理できること', async () => {
-      const client = testClient(app);
+      const client = testClient(app) as any;
 
       // Create an order
       const orderInput = {
         groups: [
           {
-            items: [{ merchandiseId: 'merch_ramen_01' }],
+            items: [{ merchandiseId: testMerchandise.ramen.id }],
           },
         ],
       };
@@ -335,13 +335,13 @@ describe('注文API契約テスト', () => {
     });
 
     it('ORDEREDからPAIDへステータスを遷移できること', async () => {
-      const client = testClient(app);
+      const client = testClient(app) as any;
 
       // Create an order
       const orderInput = {
         groups: [
           {
-            items: [{ merchandiseId: 'merch_ramen_01' }],
+            items: [{ merchandiseId: testMerchandise.ramen.id }],
           },
         ],
       };
@@ -370,13 +370,13 @@ describe('注文API契約テスト', () => {
 
   describe('POST /order-item-groups/{groupId}/prepare', () => {
     it('アイテムグループを準備中としてマークできること', async () => {
-      const client = testClient(app);
+      const client = testClient(app) as any;
 
       // Create and pay for an order
       const orderInput = {
         groups: [
           {
-            items: [{ merchandiseId: 'merch_ramen_01' }],
+            items: [{ merchandiseId: testMerchandise.ramen.id }],
           },
         ],
       };
@@ -416,7 +416,7 @@ describe('注文API契約テスト', () => {
     });
 
     it('存在しないグループに対して404を返すこと', async () => {
-      const client = testClient(app);
+      const client = testClient(app) as any;
 
       const response = await client['order-item-groups'][
         ':groupId'
@@ -428,13 +428,13 @@ describe('注文API契約テスト', () => {
     });
 
     it('複数の準備リクエストを適切に処理できること', async () => {
-      const client = testClient(app);
+      const client = testClient(app) as any;
 
       // Create, pay, and prepare an order
       const orderInput = {
         groups: [
           {
-            items: [{ merchandiseId: 'merch_ramen_01' }],
+            items: [{ merchandiseId: testMerchandise.ramen.id }],
           },
         ],
       };
@@ -469,13 +469,13 @@ describe('注文API契約テスト', () => {
     });
 
     it('NOT_READYからPREPARINGへグループステータスを遷移できること', async () => {
-      const client = testClient(app);
+      const client = testClient(app) as any;
 
       // Create an order
       const orderInput = {
         groups: [
           {
-            items: [{ merchandiseId: 'merch_ramen_01' }],
+            items: [{ merchandiseId: testMerchandise.ramen.id }],
           },
         ],
       };
@@ -520,13 +520,13 @@ describe('注文API契約テスト', () => {
 
   describe('POST /order-item-groups/{groupId}/ready', () => {
     it('アイテムグループを準備完了としてマークできること', async () => {
-      const client = testClient(app);
+      const client = testClient(app) as any;
 
       // Create, pay, and prepare an order
       const orderInput = {
         groups: [
           {
-            items: [{ merchandiseId: 'merch_ramen_01' }],
+            items: [{ merchandiseId: testMerchandise.ramen.id }],
           },
         ],
       };
@@ -570,7 +570,7 @@ describe('注文API契約テスト', () => {
     });
 
     it('存在しないグループに対して404を返すこと', async () => {
-      const client = testClient(app);
+      const client = testClient(app) as any;
 
       const response = await client['order-item-groups'][
         ':groupId'
@@ -582,13 +582,13 @@ describe('注文API契約テスト', () => {
     });
 
     it('複数の準備完了リクエストを適切に処理できること', async () => {
-      const client = testClient(app);
+      const client = testClient(app) as any;
 
       // Create, pay, prepare an order
       const orderInput = {
         groups: [
           {
-            items: [{ merchandiseId: 'merch_ramen_01' }],
+            items: [{ merchandiseId: testMerchandise.ramen.id }],
           },
         ],
       };
@@ -627,13 +627,13 @@ describe('注文API契約テスト', () => {
     });
 
     it('PREPARINGからREADYへグループステータスを遷移できること', async () => {
-      const client = testClient(app);
+      const client = testClient(app) as any;
 
       // Create, pay, and prepare an order
       const orderInput = {
         groups: [
           {
-            items: [{ merchandiseId: 'merch_ramen_01' }],
+            items: [{ merchandiseId: testMerchandise.ramen.id }],
           },
         ],
       };
@@ -682,16 +682,16 @@ describe('注文API契約テスト', () => {
     });
 
     it('すべてのグループが準備完了したときに注文ステータスを更新できること', async () => {
-      const client = testClient(app);
+      const client = testClient(app) as any;
 
       // Create an order with two groups
       const orderInput = {
         groups: [
           {
-            items: [{ merchandiseId: 'merch_ramen_01' }],
+            items: [{ merchandiseId: testMerchandise.ramen.id }],
           },
           {
-            items: [{ merchandiseId: 'merch_ramen_01' }],
+            items: [{ merchandiseId: testMerchandise.ramen.id }],
           },
         ],
       };

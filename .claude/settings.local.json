@@ -5,7 +5,10 @@
       "Bash(npm init:*)",
       "Bash(npm install:*)",
       "Bash(npx prettier:*)",
-      "Bash(npx prisma:*)"
+      "Bash(npx prisma:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npx vitest:*)",
+      "Bash(npm test:*)"
     ],
     "deny": [],
     "ask": []
