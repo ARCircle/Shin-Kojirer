@@ -1,0 +1,87 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Merchandise {
+  id          String   @id @default(cuid())
+  name        String
+  price       Int
+  type        MerchandiseType
+  isAvailable Boolean  @default(true) @map("is_available")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  orderItems OrderItem[]
+
+  @@map("merchandise")
+}
+
+enum MerchandiseType {
+  BASE_ITEM
+  TOPPING
+  DISCOUNT
+}
+
+model Order {
+  id      String      @id @default(cuid())
+  callNum Int         @unique @map("call_num")
+  status  OrderStatus @default(ORDERED)
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  groups OrderItemGroup[]
+
+  @@map("orders")
+}
+
+enum OrderStatus {
+  ORDERED
+  PAID
+  COOKING
+  READY
+  COMPLETED
+}
+
+model OrderItemGroup {
+  id       String           @id @default(cuid())
+  orderId  String           @map("order_id")
+  status   OrderGroupStatus @default(NOT_READY)
+  createdAt DateTime        @default(now()) @map("created_at")
+  updatedAt DateTime        @updatedAt @map("updated_at")
+
+  // Relations
+  order Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  items OrderItem[]
+
+  @@map("order_item_groups")
+}
+
+enum OrderGroupStatus {
+  NOT_READY
+  PREPARING
+  READY
+}
+
+model OrderItem {
+  id                String   @id @default(cuid())
+  orderItemGroupId  String   @map("order_item_group_id")
+  merchandiseId     String   @map("merchandise_id")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  group        OrderItemGroup @relation(fields: [orderItemGroupId], references: [id], onDelete: Cascade)
+  merchandise  Merchandise    @relation(fields: [merchandiseId], references: [id])
+
+  @@map("order_items")
+}

@@ -21,10 +21,10 @@
 - [X] T013: [P] Write contract test for `POST /order-item-groups/{id}/ready` in `backend/tests/contract/orders.test.ts`.
 
 ## Phase 3.3: Backend - Core Implementation
-- [ ] T014: Implement database connection module in `backend/src/lib/db.ts`.
-- [ ] T015: Create database migration script for all tables (`Merchandise`, `Price`, `Order`, `OrderItemGroup`, `OrderItem`) using a tool like `node-pg-migrate`.
-- [ ] T016: Run the migration to create the database schema.
-- [ ] T017: [P] Implement model types based on `data-model.md` in `backend/src/models/`.
+- [ ] T014: Set up Prisma ORM and database connection in `backend/`.
+- [ ] T015: Create Prisma schema for all tables (`Merchandise`, `Order`, `OrderItemGroup`, `OrderItem`) based on `data-model.md`.
+- [ ] T016: Generate Prisma client and run migrations to create the database schema.
+- [ ] T017: [P] Implement Prisma-based model types in `backend/src/models/`.
 - [ ] T018: Implement `Merchandise` service logic (create, list, set price) in `backend/src/services/merchandiseService.ts`.
 - [ ] T019: Implement `Order` service logic (create, get, update status, apply business rules) in `backend/src/services/orderService.ts`.
 - [ ] T020: Implement all `Merchandise` API endpoints in `backend/src/api/merchandise.ts`.

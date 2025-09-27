@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "npx run prettier . --write"
+            "command": "npm run prettier . --write"
           }
         ]
       }

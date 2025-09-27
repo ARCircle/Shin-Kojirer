@@ -4,7 +4,8 @@
       "Bash(mkdir:*)",
       "Bash(npm init:*)",
       "Bash(npm install:*)",
-      "Bash(npx prettier:*)"
+      "Bash(npx prettier:*)",
+      "Bash(npx prisma:*)"
     ],
     "deny": [],
     "ask": []

@@ -4,12 +4,13 @@
 **Input**: Feature specification from `/specs/001-/spec.md`
 
 ## Summary
-この機能は、来場者が自身のスマートフォンで注文から受け取り通知までを完結させるシステムを構築するものです。技術アプローチとして、フロントエンドはNext.js (TypeScript)、バックエンドはHono (TypeScript)を採用します。データストアにはセルフホストのPostgreSQLを使用します。データモデルは、`Order` -> `OrderItemGroup` -> `OrderItem` -> `Merchandise` という階層構造をとり、柔軟な注文とステータス管理を実現します。
+この機能は、来場者が自身のスマートフォンで注文から受け取り通知までを完結させるシステムを構築するものです。技術アプローチとして、フロントエンドはNext.js (TypeScript)、バックエンドはHono (TypeScript)を採用します。データストアにはセルフホストのPostgreSQLを使用し、ORMとしてPrismaを採用します。データモデルは、`Order` -> `OrderItemGroup` -> `OrderItem` -> `Merchandise` という階層構造をとり、柔軟な注文とステータス管理を実現します。
 
 ## Technical Context
 **Language/Version**: TypeScript
 **Primary Dependencies**: Next.js (Frontend), Hono (Backend)
 **Storage**: PostgreSQL (self-hosted)
+**ORM**: Prisma
 **Testing**: Vitest, Playwright
 **Target Platform**: Modern web browsers on smartphones (PWA)
 **Project Type**: Web Application (Frontend + Backend)
