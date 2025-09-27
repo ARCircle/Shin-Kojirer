@@ -1,50 +1,59 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+## Sync Impact Report
+
+- **Version change**: none → 1.0.0
+- **List of modified principles**: 
+  - N/A (Initial creation)
+- **Added sections**:
+  - Core Principles
+  - 追加の制約 (Additional Constraints)
+  - 開発ワークフロー (Development Workflow)
+  - Governance
+- **Removed sections**:
+  - None
+- **Templates requiring updates**:
+  - ⚠ pending: /Users/taniiicom/projects/ar/shin-kojirer/.specify/templates/plan-template.md
+  - ⚠ pending: /Users/taniiicom/projects/ar/shin-kojirer/.specify/templates/spec-template.md
+  - ⚠ pending: /Users/taniiicom/projects/ar/shin-kojirer/.specify/templates/tasks-template.md
+  - ⚠ pending: /Users/taniiicom/projects/ar/shin-kojirer/.gemini/commands/analyze.toml
+  - ⚠ pending: /Users/taniiicom/projects/ar/shin-kojirer/.gemini/commands/clarify.toml
+  - ⚠ pending: /Users/taniiicom/projects/ar/shin-kojirer/.gemini/commands/constitution.toml
+  - ⚠ pending: /Users/taniiicom/projects/ar/shin-kojirer/.gemini/commands/implement.toml
+  - ⚠ pending: /Users/taniiicom/projects/ar/shin-kojirer/.gemini/commands/plan.toml
+  - ⚠ pending: /Users/taniiicom/projects/ar/shin-kojirer/.gemini/commands/specfiy.toml
+  - ⚠ pending: /Users/taniiicom/projects/ar/shin-kojirer/.gemini/commands/tasks.toml
+- **Follow-up TODOs**:
+  - None
+-->
+# shin-kojirer Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### 原則1：ライブラリファースト
+すべての機能は、明確なドキュメントを備え、単体で完結し、独立してテスト可能なライブラリとして開発を始めます。
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### 原則2：CLIインターフェース
+すべてのライブラリは、コマンドラインインターフェース（CLI）を通じて機能を提供しなければなりません。テキストベースの入出力（標準入力/引数 → 標準出力、エラーは標準エラー出力）を用います。
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### 原則3：テストファースト
+テスト駆動開発（TDD）を義務付けます。実装に着手する前にテストを作成し、そのテストが失敗することを確認してから開発を進め、レッド・グリーン・リファクターのサイクルを厳守します。
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### 原則4：統合テスト
+新しいライブラリの仕様、既存仕様の変更、サービス間通信、共通スキーマなどには統合テストが必須です。
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### 原則5：シンプルさ
+常に最もシンプルな解決策から着手し、「YAGNI」（You Ain't Gonna Need It - それはまだ必要ない）の原則に従います。時期尚早な最適化や不要な複雑化は避けてください。
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+## 追加の制約
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+現時点では特になし。
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+## 開発ワークフロー
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+すべてのコード変更は、プルリクエストを通じてレビューされる必要があります。
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+すべてのプルリクエストとレビューは、この憲法の原則に準拠しているか検証する必要があります。
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: 2025-09-27 | **Last Amended**: 2025-09-27
