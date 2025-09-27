@@ -1,0 +1,27 @@
+{
+  "name": "shin-kojirer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arcircle/shin-kojirer.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/arcircle/shin-kojirer/issues"
+  },
+  "homepage": "https://github.com/arcircle/shin-kojirer#readme",
+  "devDependencies": {
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.6.2"
+  }
+}
