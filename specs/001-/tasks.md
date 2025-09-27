@@ -11,14 +11,14 @@
 
 ## Phase 3.2: Backend - Tests First (TDD)
 **CRITICAL: These tests MUST be written and MUST FAIL before ANY implementation**
-- [ ] T006: [P] Write contract test for `POST /merchandise` in `backend/tests/contract/merchandise.test.ts`.
-- [ ] T007: [P] Write contract test for `GET /merchandise` in `backend/tests/contract/merchandise.test.ts`.
-- [ ] T008: [P] Write contract test for `POST /merchandise/{id}/prices` in `backend/tests/contract/merchandise.test.ts`.
-- [ ] T009: [P] Write contract test for `POST /orders` in `backend/tests/contract/orders.test.ts`.
-- [ ] T010: [P] Write contract test for `GET /orders/{id}` in `backend/tests/contract/orders.test.ts`.
-- [ ] T011: [P] Write contract test for `POST /orders/{id}/pay` in `backend/tests/contract/orders.test.ts`.
-- [ ] T012: [P] Write contract test for `POST /order-item-groups/{id}/prepare` in `backend/tests/contract/orders.test.ts`.
-- [ ] T013: [P] Write contract test for `POST /order-item-groups/{id}/ready` in `backend/tests/contract/orders.test.ts`.
+- [X] T006: [P] Write contract test for `POST /merchandise` in `backend/tests/contract/merchandise.test.ts`.
+- [X] T007: [P] Write contract test for `GET /merchandise` in `backend/tests/contract/merchandise.test.ts`.
+- [X] T008: [P] Write contract test for `POST /merchandise/{id}/prices` in `backend/tests/contract/merchandise.test.ts`.
+- [X] T009: [P] Write contract test for `POST /orders` in `backend/tests/contract/orders.test.ts`.
+- [X] T010: [P] Write contract test for `GET /orders/{id}` in `backend/tests/contract/orders.test.ts`.
+- [X] T011: [P] Write contract test for `POST /orders/{id}/pay` in `backend/tests/contract/orders.test.ts`.
+- [X] T012: [P] Write contract test for `POST /order-item-groups/{id}/prepare` in `backend/tests/contract/orders.test.ts`.
+- [X] T013: [P] Write contract test for `POST /order-item-groups/{id}/ready` in `backend/tests/contract/orders.test.ts`.
 
 ## Phase 3.3: Backend - Core Implementation
 - [ ] T014: Implement database connection module in `backend/src/lib/db.ts`.
