@@ -11,7 +11,13 @@
       "Bash(npm test:*)",
       "Bash(.specify/scripts/bash/check-prerequisites.sh:*)",
       "Bash(docker-compose up:*)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "mcp__playwright__browser_*",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_tabs",
+      "mcp__playwright__browser_type",
+      "mcp__playwright__browser_select_option"
     ],
     "deny": [],
     "ask": []

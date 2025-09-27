@@ -8,6 +8,8 @@ import {
   CreateOrderRequestInput,
 } from '../models/types';
 import { MerchandiseService } from './merchandiseService';
+import { websocketService } from './websocketService';
+import { logBusinessEvent, logError } from '../utils/logger';
 
 export class OrderService {
   private merchandiseService: MerchandiseService;
@@ -17,9 +19,17 @@ export class OrderService {
   }
 
   async createOrder(input: CreateOrderRequestInput): Promise<OrderWithGroups> {
+    logBusinessEvent('order.create.started', {
+      groupCount: input.groups?.length || 0,
+      totalItems:
+        input.groups?.reduce((sum, g) => sum + (g.items?.length || 0), 0) || 0,
+    });
+
     // バリデーション
     if (!input.groups || input.groups.length === 0) {
-      throw new Error('Order must contain at least one group');
+      const error = new Error('Order must contain at least one group');
+      logError(error, { input });
+      throw error;
     }
 
     for (const group of input.groups) {
@@ -32,9 +42,11 @@ export class OrderService {
       const groupValidation =
         await this.merchandiseService.validateGroupItems(merchandiseIds);
       if (!groupValidation.valid) {
-        throw new Error(
+        const error = new Error(
           `Group validation failed: ${groupValidation.errors.join(', ')}`
         );
+        logError(error, { merchandiseIds, groupValidation });
+        throw error;
       }
 
       // 商品存在・利用可能性検証
@@ -43,9 +55,11 @@ export class OrderService {
           merchandiseIds
         );
       if (!merchandiseValidation.valid) {
-        throw new Error(
+        const error = new Error(
           `Merchandise validation failed: ${merchandiseValidation.errors.join(', ')}`
         );
+        logError(error, { merchandiseIds, merchandiseValidation });
+        throw error;
       }
     }
 
@@ -53,13 +67,19 @@ export class OrderService {
     const callNum = await this.generateCallNumber();
 
     // トランザクション内で注文作成
-    return await prisma.$transaction(async (tx) => {
+    const order = await prisma.$transaction(async (tx) => {
       // 注文作成
       const order = await tx.order.create({
         data: {
           callNum,
           status: 'ORDERED',
         },
+      });
+
+      logBusinessEvent('order.created', {
+        orderId: order.id,
+        callNum: order.callNum,
+        status: order.status,
       });
 
       // グループとアイテム作成
@@ -82,7 +102,7 @@ export class OrderService {
       }
 
       // 作成された注文を関連データと共に取得
-      return (await tx.order.findUnique({
+      const createdOrder = (await tx.order.findUnique({
         where: { id: order.id },
         include: {
           groups: {
@@ -96,7 +116,31 @@ export class OrderService {
           },
         },
       })) as OrderWithGroups;
+
+      logBusinessEvent('order.create.completed', {
+        orderId: order.id,
+        callNum: order.callNum,
+        groupCount: createdOrder.groups.length,
+        totalAmount: createdOrder.groups.reduce(
+          (sum, group) =>
+            sum +
+            group.items.reduce(
+              (itemSum, item) => itemSum + item.merchandise.price,
+              0
+            ),
+          0
+        ),
+      });
+
+      return createdOrder;
     });
+
+    // WebSocketで新しい注文をキッチンに通知
+    if (websocketService) {
+      websocketService.emitNewOrder(order);
+    }
+
+    return order;
   }
 
   async getOrderById(id: string): Promise<OrderWithGroups | null> {
@@ -119,13 +163,38 @@ export class OrderService {
   async updateOrderStatus(id: string, status: OrderStatus): Promise<Order> {
     const order = await prisma.order.findUnique({ where: { id } });
     if (!order) {
-      throw new Error('Order not found');
+      const error = new Error('Order not found');
+      logError(error, { orderId: id });
+      throw error;
     }
 
-    return await prisma.order.update({
+    logBusinessEvent('order.status.updating', {
+      orderId: id,
+      oldStatus: order.status,
+      newStatus: status,
+    });
+
+    const updatedOrder = await prisma.order.update({
       where: { id },
       data: { status },
     });
+
+    logBusinessEvent('order.status.updated', {
+      orderId: id,
+      status: updatedOrder.status,
+    });
+
+    // WebSocketで注文ステータス更新を通知
+    if (websocketService) {
+      websocketService.emitOrderStatusUpdate(id, status);
+
+      // 注文が完了した場合は特別な通知
+      if (status === 'READY') {
+        websocketService.emitOrderReady(id);
+      }
+    }
+
+    return updatedOrder;
   }
 
   async payOrder(id: string): Promise<OrderWithGroups> {
@@ -136,7 +205,14 @@ export class OrderService {
 
     await this.updateOrderStatus(id, 'PAID');
 
-    return (await this.getOrderById(id))!;
+    const paidOrder = (await this.getOrderById(id))!;
+
+    // WebSocketで支払い完了をキッチンに通知
+    if (websocketService) {
+      websocketService.emitOrderPaid(id, paidOrder);
+    }
+
+    return paidOrder;
   }
 
   async updateGroupStatus(
@@ -155,6 +231,11 @@ export class OrderService {
       where: { id: groupId },
       data: { status },
     });
+
+    // WebSocketでグループステータス更新を通知
+    if (websocketService) {
+      websocketService.emitGroupStatusUpdate(group.orderId, groupId, status);
+    }
 
     // 全てのグループが準備完了した場合、注文ステータスを更新
     if (status === 'READY') {

@@ -37,10 +37,10 @@
 ## Phase 3.4: Frontend - Core Implementation
 
 - [x] T022: Setup an API client service in `frontend/lib/apiClient.ts` to communicate with the backend.
-- [ ] T023: [P] Implement the main ordering page (`/`) to list merchandise and create an order.
-- [ ] T024: [P] Implement the order status page (`/orders/[id]`) to display order and group statuses.
-- [ ] T025: [P] Implement the kitchen display page (`/kitchen`) for internal staff to view and update group statuses.
-- [ ] T026: [P] Implement the admin page (`/admin`) to manage merchandise and prices.
+- [x] T023: [P] Implement the main ordering page (`/`) to list merchandise and create an order.
+- [x] T024: [P] Implement the order status page (`/orders/[id]`) to display order and group statuses.
+- [x] T025: [P] Implement the kitchen display page (`/kitchen`) for internal staff to view and update group statuses.
+- [x] T026: [P] Implement the admin page (`/admin`) to manage merchandise and prices.
 
 ## Phase 3.5: End-to-End Testing
 
@@ -48,8 +48,8 @@
 
 ## Phase 3.6: Polish
 
-- [ ] T028: [P] Add unit tests for complex business logic in the backend services (e.g., price calculation, status transition rules).
-- [ ] T029: [P] Implement real-time updates on the frontend using WebSockets (e.g., Socket.IO) for order status changes.
+- [x] T028: [P] Add unit tests for complex business logic in the backend services (e.g., price calculation, status transition rules).
+- [x] T029: [P] Implement real-time updates on the frontend using WebSockets (e.g., Socket.IO) for order status changes.
 - [ ] T030: [P] Review and enhance accessibility (WCAG 2.1 AA) across all frontend pages.
 - [ ] T031: [P] Add comprehensive logging to the backend for easier debugging.
 
