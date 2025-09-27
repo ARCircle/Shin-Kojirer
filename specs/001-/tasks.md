@@ -36,7 +36,7 @@
 
 ## Phase 3.4: Frontend - Core Implementation
 
-- [ ] T022: Setup an API client service in `frontend/lib/apiClient.ts` to communicate with the backend.
+- [x] T022: Setup an API client service in `frontend/lib/apiClient.ts` to communicate with the backend.
 - [ ] T023: [P] Implement the main ordering page (`/`) to list merchandise and create an order.
 - [ ] T024: [P] Implement the order status page (`/orders/[id]`) to display order and group statuses.
 - [ ] T025: [P] Implement the kitchen display page (`/kitchen`) for internal staff to view and update group statuses.
