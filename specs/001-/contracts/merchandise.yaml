@@ -1,0 +1,70 @@
+openapi: 3.0.0
+info:
+  title: Merchandise API
+  version: 1.0.0
+paths:
+  /merchandise:
+    get:
+      summary: List all merchandise items
+      responses:
+        '200':
+          description: A list of merchandise items.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Merchandise'
+    post:
+      summary: Create a new merchandise item
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MerchandiseInput'
+      responses:
+        '201':
+          description: Merchandise created.
+
+  /merchandise/{merchandiseId}/prices:
+    post:
+      summary: Set a new price for a merchandise item
+      parameters:
+        - name: merchandiseId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                price: { type: integer }
+                since: { type: string, format: date-time }
+      responses:
+        '201':
+          description: Price created.
+
+components:
+  schemas:
+    Merchandise:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        price: { type: integer }
+        type: { type: string, enum: [BASE_ITEM, TOPPING, DISCOUNT] }
+        isAvailable: { type: boolean }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    MerchandiseInput:
+      type: object
+      properties:
+        name: { type: string }
+        price: { type: integer }
+        type: { type: string, enum: [BASE_ITEM, TOPPING, DISCOUNT] }
+        isAvailable: { type: boolean, default: true }

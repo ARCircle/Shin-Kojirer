@@ -1,0 +1,120 @@
+openapi: 3.0.0
+info:
+  title: Order API
+  version: 1.0.0
+paths:
+  /orders:
+    post:
+      summary: Create a new order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                groups:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            merchandiseId: { type: string, format: uuid }
+      responses:
+        '201':
+          description: Order created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+
+  /orders/{orderId}:
+    get:
+      summary: Get order details
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+
+  /orders/{orderId}/pay:
+    post:
+      summary: Mark an order as paid (updates Order status)
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Order paid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+
+  /order-item-groups/{groupId}/prepare:
+    post:
+      summary: Mark an item group as preparing (updates OrderItemGroup status)
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Item group is preparing
+
+  /order-item-groups/{groupId}/ready:
+    post:
+      summary: Mark an item group as ready (updates OrderItemGroup status)
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Item group is ready
+
+components:
+  schemas:
+    Order:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        callNum: { type: integer }
+        status: { type: string }
+        groups: 
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItemGroup'
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    OrderItemGroup:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        status: { type: string }
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItem'
+
+    OrderItem:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        merchandiseId: { type: string, format: uuid }
