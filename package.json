@@ -2,12 +2,16 @@
   "name": "shin-kojirer",
   "version": "1.0.0",
   "description": "",
+  "private": true,
   "main": "index.js",
   "directories": {
     "doc": "docs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node scripts/dev.js",
+    "dev:backend": "npm run dev --workspace backend",
+    "dev:frontend": "npm run dev --workspace frontend"
   },
   "repository": {
     "type": "git",
@@ -20,6 +24,10 @@
     "url": "https://github.com/arcircle/shin-kojirer/issues"
   },
   "homepage": "https://github.com/arcircle/shin-kojirer#readme",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
   "devDependencies": {
     "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.6.2"
