@@ -18,7 +18,7 @@ interface UseSocketReturn {
 export function useSocket(options: UseSocketOptions = {}): UseSocketReturn {
   const {
     autoConnect = true,
-    serverUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3000',
+    serverUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:4000',
   } = options;
 
   const socketRef = useRef<Socket | null>(null);

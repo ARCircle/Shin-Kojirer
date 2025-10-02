@@ -62,7 +62,7 @@ app.onError((err, c) => {
 
 // サーバー起動（テスト環境では実行しない）
 if (process.env.NODE_ENV !== 'test') {
-  const port = parseInt(process.env.PORT || '3000');
+  const port = parseInt(process.env.PORT || '4000');
 
   async function startServer() {
     try {
