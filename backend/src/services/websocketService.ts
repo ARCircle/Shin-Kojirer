@@ -45,6 +45,18 @@ export class WebSocketService {
         console.log(`Client ${socket.id} unsubscribed from kitchen updates`);
       });
 
+      // 支払い画面が全注文の更新を購読
+      socket.on('subscribe-payment', () => {
+        socket.join('payment');
+        console.log(`Client ${socket.id} subscribed to payment updates`);
+      });
+
+      // 支払い購読を解除
+      socket.on('unsubscribe-payment', () => {
+        socket.leave('payment');
+        console.log(`Client ${socket.id} unsubscribed from payment updates`);
+      });
+
       socket.on('disconnect', () => {
         console.log(`WebSocket client disconnected: ${socket.id}`);
       });
@@ -53,7 +65,7 @@ export class WebSocketService {
 
   // 新しい注文が作成されたときに通知
   emitNewOrder(order: OrderWithGroups) {
-    this.io.to('kitchen').emit('order-created', {
+    const orderData = {
       orderId: order.id,
       callNum: order.callNum,
       status: order.status,
@@ -71,26 +83,35 @@ export class WebSocketService {
         })),
       })),
       createdAt: order.createdAt,
-    });
+    };
+
+    // キッチンに通知
+    this.io.to('kitchen').emit('order-created', orderData);
+
+    // 支払い画面に通知（ORDERED状態の場合のみ）
+    if (order.status === 'ORDERED') {
+      this.io.to('payment').emit('order-created', orderData);
+    }
 
     console.log(`Emitted new order notification for order ${order.id}`);
   }
 
   // 注文のステータスが更新されたときに通知
   emitOrderStatusUpdate(orderId: string, newStatus: string) {
-    // 特定の注文を購読しているクライアントに通知
-    this.io.to(`order-${orderId}`).emit('order-status-updated', {
+    const updateData = {
       orderId,
       status: newStatus,
       timestamp: new Date().toISOString(),
-    });
+    };
+
+    // 特定の注文を購読しているクライアントに通知
+    this.io.to(`order-${orderId}`).emit('order-status-updated', updateData);
 
     // キッチンにも通知
-    this.io.to('kitchen').emit('order-status-updated', {
-      orderId,
-      status: newStatus,
-      timestamp: new Date().toISOString(),
-    });
+    this.io.to('kitchen').emit('order-status-updated', updateData);
+
+    // 支払い画面にも通知（ORDERED以外に変更された場合、一覧から削除するため）
+    this.io.to('payment').emit('order-status-updated', updateData);
 
     console.log(
       `Emitted order status update for order ${orderId}: ${newStatus}`

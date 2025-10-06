@@ -118,3 +118,22 @@ export function useKitchenSocket() {
 
   return { socket, isConnected };
 }
+
+// 支払い画面用のカスタムフック
+export function usePaymentSocket() {
+  const { socket, isConnected } = useSocket();
+
+  useEffect(() => {
+    if (socket && isConnected) {
+      // 支払い画面の更新を購読
+      socket.emit('subscribe-payment');
+
+      return () => {
+        // 購読を解除
+        socket.emit('unsubscribe-payment');
+      };
+    }
+  }, [socket, isConnected]);
+
+  return { socket, isConnected };
+}

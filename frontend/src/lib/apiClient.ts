@@ -22,10 +22,17 @@ export interface OrderItemGroup {
   items: OrderItem[];
 }
 
+export type OrderStatus =
+  | 'ORDERED'
+  | 'PAID'
+  | 'COOKING'
+  | 'READY'
+  | 'COMPLETED';
+
 export interface Order {
   id: string;
   callNum: number;
-  status: string;
+  status: OrderStatus;
   groups: OrderItemGroup[];
   createdAt: string;
   updatedAt: string;
@@ -96,6 +103,20 @@ class ApiClient {
 
   async getOrder(id: string): Promise<Order> {
     return this.fetch<Order>(`/orders/${id}`);
+  }
+
+  async getAllOrders(params?: {
+    status?: string;
+    limit?: number;
+    offset?: number;
+  }): Promise<Order[]> {
+    const searchParams = new URLSearchParams();
+    if (params?.status) searchParams.append('status', params.status);
+    if (params?.limit) searchParams.append('limit', String(params.limit));
+    if (params?.offset) searchParams.append('offset', String(params.offset));
+
+    const query = searchParams.toString();
+    return this.fetch<Order[]>(`/orders${query ? `?${query}` : ''}`);
   }
 
   async payOrder(id: string): Promise<Order> {
