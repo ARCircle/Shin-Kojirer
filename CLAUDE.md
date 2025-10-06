@@ -66,6 +66,7 @@ npm run dev
 ```
 
 アクセス先:
+
 - フロントエンド（注文画面）: http://localhost:3000
 - キッチンディスプレイ: http://localhost:3000/kitchen
 - 管理画面: http://localhost:3000/admin
@@ -234,6 +235,7 @@ npm run db:seed
    - 解決策: `npm run db:push` を使用（開発環境）
 
 2. **データベース接続エラー**
+
    ```bash
    # コンテナの状態確認
    docker-compose ps
@@ -246,11 +248,13 @@ npm run db:seed
    ```
 
 3. **Prisma Clientが見つからない**
+
    ```bash
    npm run db:generate
    ```
 
 4. **ポート競合（4000または3000が使用中）**
+
    ```bash
    # macOS/Linuxでポート使用確認
    lsof -i :4000

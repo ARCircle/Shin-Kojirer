@@ -124,9 +124,6 @@ export default function Home() {
 
       const order = await apiClient.createOrder({ groups });
 
-      // 支払い処理
-      await apiClient.payOrder(order.id);
-
       // ローカルストレージに注文IDを保存（キッチンページ用）
       const recentOrders = JSON.parse(
         localStorage.getItem('recentOrders') || '[]'
@@ -346,7 +343,7 @@ export default function Home() {
                     disabled={loading || cart.length === 0}
                     className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
                   >
-                    注文して支払う
+                    注文する
                   </button>
                 </div>
               </>
