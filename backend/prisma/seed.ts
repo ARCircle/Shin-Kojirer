@@ -298,7 +298,7 @@ async function main() {
   const order4 = await prisma.order.create({
     data: {
       id: '019902e4-10c8-8c67-99f0-1f1a75abbdae',
-      callNum: 1, // 今日の新しい呼び出し番号
+      callNum: 4, // 今日の新しい呼び出し番号
       status: 'ORDERED',
     },
   });

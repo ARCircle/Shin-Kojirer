@@ -49,8 +49,8 @@ Promise.all(
         child.on('close', (code) => {
           resolve(code);
         });
-      }),
-  ),
+      })
+  )
 ).then((codes) => {
   if (exitCode === undefined) {
     exitCode = codes.find((code) => code !== 0) ?? 0;
