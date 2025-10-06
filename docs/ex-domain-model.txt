@@ -1,0 +1,66 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ER図を生成するgenerator
+// 普段は必要ないのでコメントアウトしている
+// note: コメント解除するとCIが落ちるので注意
+// generator erd {
+//   provider = "prisma-erd-generator"
+// }
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model orders {
+  id               String   @id @default(uuid(7)) @db.Uuid
+  num_sns_followed Int      @default(0) // SNSフォローされた数ぶんだけトッピングを無料にする
+  create_datetime  DateTime @default(now())
+  call_num         Int
+  dons             dons[]
+}
+
+model dons {
+  id              String           @id @default(uuid(7)) @db.Uuid
+  order_id        String           @db.Uuid
+  status          Int              @default(1) // 1: ordered, 2: cooking, 3: cooked, 4: delivered, 5: canceled
+  create_datetime DateTime         @default(now())
+  update_datetime DateTime         @updatedAt
+  order           orders           @relation(fields: [order_id], references: [id])
+  customizes      don_customizes[]
+}
+
+model don_customizes {
+  id           String  @id @default(uuid(7)) @db.Uuid
+  don_id       String  @db.Uuid
+  customize_id String  @db.Uuid
+  is_discount  Boolean
+
+  customize customizes @relation(fields: [customize_id], references: [id])
+  don       dons       @relation(fields: [don_id], references: [id])
+}
+
+model customizes {
+  id               String             @id @default(uuid(7)) @db.Uuid
+  label            String             @db.VarChar()
+  available        Boolean            @default(true)
+  customize_prices customize_prices[]
+  dons             don_customizes[]
+}
+
+model customize_prices {
+  customize_id String     @db.Uuid
+  price        Int
+  since        DateTime
+  customize    customizes @relation(fields: [customize_id], references: [id])
+
+  @@id([customize_id, since]) // 同じカスタマイズの値段に対して、同じ日付の価格は存在しない
+}
