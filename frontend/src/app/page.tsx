@@ -16,6 +16,7 @@ export default function Home() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [hasClickedRT, setHasClickedRT] = useState(false);
 
   useEffect(() => {
     loadMerchandise();
@@ -145,10 +146,34 @@ export default function Home() {
     }
   };
 
+  const handleRTClick = () => {
+    setHasClickedRT(true);
+    // Twitter Intent Linkを開く
+    const tweetText = encodeURIComponent(
+      '美味しいラーメン屋さんで注文中！ #ラーメン #グルメ'
+    );
+    const tweetUrl = 'https://x.com/arcircle/status/1853006034664923354';
+    window.open(
+      `https://twitter.com/intent/retweet?tweet_id=1853006034664923354`,
+      '_blank'
+    );
+  };
+
+  const applyRTCoupon = () => {
+    if (!hasClickedRT) return;
+
+    // RTクーポンを探す
+    const rtCoupon = merchandise.find(
+      (m) => m.name === 'RTクーポン（トッピング1つ無料）'
+    );
+    if (rtCoupon) {
+      addToCart(rtCoupon);
+    }
+  };
+
   const groupedMerchandise = {
     baseItems: merchandise.filter((m) => m.type === 'BASE_ITEM'),
     toppings: merchandise.filter((m) => m.type === 'TOPPING'),
-    discounts: merchandise.filter((m) => m.type === 'DISCOUNT'),
   };
 
   if (loading) {
@@ -232,26 +257,42 @@ export default function Home() {
             </div>
           )}
 
-          {/* 割引 */}
-          {groupedMerchandise.discounts.length > 0 && (
-            <div className="mb-8">
-              <h2 className="text-xl font-semibold mb-4">割引</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {groupedMerchandise.discounts.map((item) => (
-                  <div key={item.id} className="border rounded-lg p-3">
-                    <h3 className="font-medium text-sm">{item.name}</h3>
-                    <p className="text-red-600 text-sm">¥{item.price}</p>
-                    <button
-                      onClick={() => addToCart(item)}
-                      className="mt-2 bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600"
-                    >
-                      適用
-                    </button>
-                  </div>
-                ))}
+          {/* RTクーポン */}
+          <div className="mb-8 bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-300 rounded-lg p-6">
+            <h2 className="text-xl font-semibold mb-3 text-blue-900">
+              🎁 特別キャンペーン
+            </h2>
+            <p className="text-sm text-gray-700 mb-4">
+              ツイートをRTして、トッピング1つ無料クーポンをゲット！
+            </p>
+            {!hasClickedRT ? (
+              <button
+                onClick={handleRTClick}
+                className="w-full bg-blue-500 text-white px-4 py-3 rounded-lg hover:bg-blue-600 font-semibold flex items-center justify-center gap-2"
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
+                </svg>
+                ツイートをRTしてクーポンGET
+              </button>
+            ) : (
+              <div className="space-y-3">
+                <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg text-sm">
+                  ✅ RTありがとうございます！クーポンを適用できます
+                </div>
+                <button
+                  onClick={applyRTCoupon}
+                  className="w-full bg-green-500 text-white px-4 py-3 rounded-lg hover:bg-green-600 font-semibold"
+                >
+                  クーポンを適用する（トッピング1つ無料）
+                </button>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </section>
 
         {/* カート */}

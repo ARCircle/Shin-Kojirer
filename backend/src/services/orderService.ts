@@ -252,26 +252,14 @@ export class OrderService {
   }
 
   private async generateCallNumber(): Promise<number> {
-    // 今日の最大呼び出し番号を取得
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-
+    // 全体の最大呼び出し番号を取得（データベース全体でユニーク）
     const latestOrder = await prisma.order.findFirst({
-      where: {
-        createdAt: {
-          gte: today,
-          lt: tomorrow,
-        },
-      },
       orderBy: {
         callNum: 'desc',
       },
     });
 
-    // 呼び出し番号は1から開始し、日ごとにリセット
+    // 呼び出し番号は1から開始
     return latestOrder ? latestOrder.callNum + 1 : 1;
   }
 
