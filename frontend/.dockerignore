@@ -1,0 +1,50 @@
+# 依存関係
+node_modules
+npm-debug.log
+
+# ビルド出力
+.next
+out
+dist
+
+# 環境変数
+.env
+.env.local
+.env.*.local
+
+# テスト
+tests
+test-results
+playwright-report
+playwright/.cache
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+coverage
+
+# Git
+.git
+.gitignore
+
+# エディタ
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# ドキュメント
+README.md
+*.md
+
+# 開発用ファイル
+tsconfig.json
+next.config.js
+tailwind.config.ts
+postcss.config.js
+playwright.config.ts

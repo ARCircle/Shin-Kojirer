@@ -1,0 +1,40 @@
+# 依存関係
+node_modules
+npm-debug.log
+
+# ビルド出力
+dist
+
+# 環境変数
+.env
+.env.local
+.env.*.local
+
+# テスト
+tests
+*.test.ts
+*.spec.ts
+coverage
+
+# Git
+.git
+.gitignore
+
+# エディタ
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# ドキュメント
+README.md
+*.md
+
+# 開発用ファイル
+tsconfig.json
+nodemon.json
