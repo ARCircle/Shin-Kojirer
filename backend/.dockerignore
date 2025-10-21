@@ -36,5 +36,4 @@ README.md
 *.md
 
 # 開発用ファイル
-tsconfig.json
 nodemon.json

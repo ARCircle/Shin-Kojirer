@@ -18,7 +18,12 @@
       "mcp__playwright__browser_tabs",
       "mcp__playwright__browser_type",
       "mcp__playwright__browser_select_option",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(docker build:*)",
+      "Bash(awk:*)",
+      "Bash(xargs:*)",
+      "Bash(docker logs:*)",
+      "Bash(docker run:*)"
     ],
     "deny": [],
     "ask": []

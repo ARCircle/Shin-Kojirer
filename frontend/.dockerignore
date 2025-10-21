@@ -43,8 +43,4 @@ README.md
 *.md
 
 # 開発用ファイル
-tsconfig.json
-next.config.js
-tailwind.config.ts
-postcss.config.js
 playwright.config.ts

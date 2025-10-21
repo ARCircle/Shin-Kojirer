@@ -21,7 +21,11 @@ WORKDIR /app
 
 # 依存関係をコピー
 COPY package*.json ./
+COPY prisma ./prisma/
 RUN npm ci
+
+# Prisma Clientを生成
+RUN npx prisma generate
 
 # ソースコードをコピー
 COPY . .
@@ -38,6 +42,9 @@ ENV NODE_ENV=production
 # ユーザーを作成
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 hono
+
+# logsディレクトリを作成して権限設定
+RUN mkdir -p logs && chown -R hono:nodejs logs
 
 # 必要なファイルをコピー
 COPY --from=deps --chown=hono:nodejs /app/node_modules ./node_modules
