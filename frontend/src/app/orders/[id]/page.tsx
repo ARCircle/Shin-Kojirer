@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import Link from 'next/link';
 import { apiClient, Order } from '@/lib/apiClient';
 import { useOrderSocket } from '@/hooks/useSocket';
 
@@ -325,13 +326,13 @@ export default function OrderStatusPage() {
 
       {/* ホームへ戻るボタン */}
       <nav className="mt-8 text-center">
-        <a
+        <Link
           href="/"
           className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           aria-label="ホームページに戻って新しい注文を作成"
         >
           新しい注文を作成
-        </a>
+        </Link>
       </nav>
     </div>
   );

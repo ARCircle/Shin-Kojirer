@@ -4,10 +4,15 @@ import { useState, useEffect } from 'react';
 import { apiClient, Order } from '@/lib/apiClient';
 import { useKitchenSocket } from '@/hooks/useSocket';
 
-interface OrderWithGroups extends Order {
+interface OrderWithGroups {
+  id: string;
+  callNum: number;
+  status: Order['status'];
+  createdAt: string;
+  updatedAt: string;
   groups: Array<{
     id: string;
-    status: string;
+    status: 'NOT_READY' | 'PREPARING' | 'READY';
     items: Array<{
       id: string;
       merchandiseId: string;
@@ -16,6 +21,9 @@ interface OrderWithGroups extends Order {
         name: string;
         price: number;
         type: string;
+        isAvailable: boolean;
+        createdAt: string;
+        updatedAt: string;
       };
     }>;
   }>;

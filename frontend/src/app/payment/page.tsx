@@ -27,7 +27,7 @@ export default function PaymentPage() {
       orderId: string;
       callNum: number;
       status: string;
-      groups: any[];
+      groups: unknown[];
       createdAt: string;
     }) => {
       console.log('New order created:', data);
@@ -37,7 +37,7 @@ export default function PaymentPage() {
           id: data.orderId,
           callNum: data.callNum,
           status: data.status as Order['status'],
-          groups: data.groups,
+          groups: data.groups as Order['groups'],
           createdAt: data.createdAt,
           updatedAt: data.createdAt,
         };
