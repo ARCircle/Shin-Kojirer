@@ -25,10 +25,8 @@ COPY . .
 # Next.jsのテレメトリを無効化
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# バックエンドAPIのURLを環境変数として設定（ビルド時）
-ENV NEXT_PUBLIC_API_URL=http://localhost:4000
-
 # Next.jsをビルド
+# 注: API URLは実行時に環境変数で設定します（/api/configエンドポイント経由）
 RUN npm run build
 
 # 本番イメージ

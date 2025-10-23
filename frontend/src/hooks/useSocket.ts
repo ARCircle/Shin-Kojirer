@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { useRuntimeConfig } from '@/providers/RuntimeConfigProvider';
 
 interface UseSocketOptions {
   autoConnect?: boolean;
@@ -16,10 +17,8 @@ interface UseSocketReturn {
 }
 
 export function useSocket(options: UseSocketOptions = {}): UseSocketReturn {
-  const {
-    autoConnect = true,
-    serverUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:4000',
-  } = options;
+  const { config } = useRuntimeConfig();
+  const { autoConnect = true, serverUrl = config.backendUrl } = options;
 
   const socketRef = useRef<Socket | null>(null);
   const isConnectedRef = useRef(false);

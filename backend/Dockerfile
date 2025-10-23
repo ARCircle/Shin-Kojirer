@@ -57,6 +57,6 @@ USER hono
 EXPOSE 4000
 
 ENV PORT=4000
-ENV DATABASE_URL="postgresql://developer:development@postgres:5432/ordering_system"
+# DATABASE_URLとALLOWED_ORIGINSは実行時に環境変数で上書きすること
 
 CMD ["node", "dist/index.js"]

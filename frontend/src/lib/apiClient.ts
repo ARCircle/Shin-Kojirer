@@ -1,4 +1,10 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+// 実行時にAPI URLを取得
+let API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+
+// 実行時設定を更新する関数
+export function setApiBaseUrl(url: string) {
+  API_BASE_URL = url;
+}
 
 export interface Merchandise {
   id: string;
