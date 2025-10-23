@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { apiClient, Order } from '@/lib/apiClient';
 import { useKitchenSocket } from '@/hooks/useSocket';
+import { useRuntimeConfig } from '@/providers/RuntimeConfigProvider';
 
 interface OrderWithGroups {
   id: string;
@@ -30,22 +31,15 @@ interface OrderWithGroups {
 }
 
 export default function KitchenPage() {
+  const { loading: configLoading } = useRuntimeConfig();
   const [orders, setOrders] = useState<OrderWithGroups[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [lastUpdated, setLastUpdated] = useState(new Date());
 
   // WebSocketによるリアルタイム更新
-  const { socket, isConnected } = useKitchenSocket();
+  useKitchenSocket();
 
-  useEffect(() => {
-    loadOrders();
-    // ポーリングで定期的に更新
-    const interval = setInterval(loadOrders, 2000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const loadOrders = async () => {
+  const loadOrders = useCallback(async () => {
     try {
       // 簡易実装: 最近の注文を全て取得（実際はバックエンドで専用エンドポイントが必要）
       // ここでは仮にローカルストレージから最近の注文IDを取得
@@ -75,7 +69,18 @@ export default function KitchenPage() {
         err instanceof Error ? err.message : '注文の読み込みに失敗しました'
       );
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (configLoading) {
+      return;
+    }
+
+    loadOrders();
+    // ポーリングで定期的に更新
+    const interval = setInterval(loadOrders, 2000);
+    return () => clearInterval(interval);
+  }, [configLoading, loadOrders]);
 
   const updateGroupStatus = async (
     groupId: string,

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiClient, Merchandise, CreateOrderInput } from '@/lib/apiClient';
+import { useRuntimeConfig } from '@/providers/RuntimeConfigProvider';
 
 interface CartItem {
   merchandiseId: string;
@@ -12,6 +13,7 @@ interface CartItem {
 
 export default function Home() {
   const router = useRouter();
+  const { loading: configLoading } = useRuntimeConfig();
   const [merchandise, setMerchandise] = useState<Merchandise[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -19,8 +21,11 @@ export default function Home() {
   const [hasClickedRT, setHasClickedRT] = useState(false);
 
   useEffect(() => {
-    loadMerchandise();
-  }, []);
+    // 設定の読み込みが完了してからAPIリクエストを実行
+    if (!configLoading) {
+      loadMerchandise();
+    }
+  }, [configLoading]);
 
   const loadMerchandise = async () => {
     try {
@@ -146,10 +151,6 @@ export default function Home() {
   const handleRTClick = () => {
     setHasClickedRT(true);
     // Twitter Intent Linkを開く
-    const tweetText = encodeURIComponent(
-      '美味しいラーメン屋さんで注文中！ #ラーメン #グルメ'
-    );
-    const tweetUrl = 'https://x.com/arcircle/status/1853006034664923354';
     window.open(
       `https://twitter.com/intent/retweet?tweet_id=1853006034664923354`,
       '_blank'

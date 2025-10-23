@@ -44,7 +44,7 @@ RUN addgroup --system --gid 1001 nodejs && \
 COPY --from=builder /app/public ./public
 
 # Next.jsのビルド出力をコピー
-RUN mkdir .next
+# standaloneビルド結果（node_modules + server.js + .next）
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 

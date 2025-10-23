@@ -1,9 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { apiClient, Merchandise } from '@/lib/apiClient';
+import { useRuntimeConfig } from '@/providers/RuntimeConfigProvider';
 
 export default function AdminPage() {
+  const { loading: configLoading } = useRuntimeConfig();
   const [merchandise, setMerchandise] = useState<Merchandise[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -14,11 +16,7 @@ export default function AdminPage() {
     isAvailable: true,
   });
 
-  useEffect(() => {
-    loadMerchandise();
-  }, []);
-
-  const loadMerchandise = async () => {
+  const loadMerchandise = useCallback(async () => {
     try {
       setLoading(true);
       const data = await apiClient.getMerchandise();
@@ -31,7 +29,13 @@ export default function AdminPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (!configLoading) {
+      loadMerchandise();
+    }
+  }, [configLoading, loadMerchandise]);
 
   const handleCreateMerchandise = async (e: React.FormEvent) => {
     e.preventDefault();
