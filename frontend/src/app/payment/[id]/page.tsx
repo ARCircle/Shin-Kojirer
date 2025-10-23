@@ -1,24 +1,22 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { apiClient, Order } from '@/lib/apiClient';
+import { useRuntimeConfig } from '@/providers/RuntimeConfigProvider';
 
 export default function PaymentDetailPage() {
   const router = useRouter();
   const params = useParams();
   const orderId = params.id as string;
+  const { loading: configLoading } = useRuntimeConfig();
 
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
 
-  useEffect(() => {
-    loadOrder();
-  }, [orderId]);
-
-  const loadOrder = async () => {
+  const loadOrder = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -31,7 +29,13 @@ export default function PaymentDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [orderId]);
+
+  useEffect(() => {
+    if (!configLoading) {
+      loadOrder();
+    }
+  }, [configLoading, loadOrder]);
 
   const handlePayment = async () => {
     if (!order) return;

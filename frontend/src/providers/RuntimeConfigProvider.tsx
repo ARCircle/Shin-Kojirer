@@ -39,8 +39,9 @@ export function RuntimeConfigProvider({
 
   useEffect(() => {
     // 実行時設定を取得
-    console.log('[RuntimeConfig] Fetching runtime config from /api/config');
-    fetch('/api/config')
+    // 注: /api はバックエンドにルーティングされるため、/runtime-config を使用
+    console.log('[RuntimeConfig] Fetching runtime config from /runtime-config');
+    fetch('/runtime-config')
       .then((res) => {
         console.log('[RuntimeConfig] Response status:', res.status);
         if (!res.ok) {

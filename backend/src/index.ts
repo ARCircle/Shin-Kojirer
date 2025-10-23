@@ -38,10 +38,42 @@ app.get('/health', async (c) => {
   }
 });
 
-// API routes
-app.route('/merchandise', merchandiseAPI);
-app.route('/orders', ordersAPI);
-app.route('/order-item-groups', orderItemGroupsAPI);
+function normalizePrefix(prefix: string | undefined): string {
+  if (!prefix) {
+    return '';
+  }
+  const trimmed = prefix.trim();
+  if (!trimmed || trimmed === '/') {
+    return '';
+  }
+  let normalized = trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+  if (normalized.endsWith('/')) {
+    normalized = normalized.slice(0, -1);
+  }
+  return normalized;
+}
+
+function registerRoutes(basePath: string) {
+  const withBase = (path: string) => (basePath ? `${basePath}${path}` : path);
+  app.route(withBase('/merchandise'), merchandiseAPI);
+  app.route(withBase('/orders'), ordersAPI);
+  app.route(withBase('/order-item-groups'), orderItemGroupsAPI);
+}
+
+const defaultApiPrefix = normalizePrefix('/api');
+const configuredPrefix = normalizePrefix(
+  process.env.API_ROUTE_PREFIX ?? process.env.API_BASE_PATH
+);
+
+// Always expose non-prefixed routes for backward compatibility
+registerRoutes('');
+
+// Expose configured prefix when provided, otherwise fall back to /api
+if (configuredPrefix) {
+  registerRoutes(configuredPrefix);
+} else if (defaultApiPrefix) {
+  registerRoutes(defaultApiPrefix);
+}
 
 // 404ハンドラー
 app.notFound((c) => {

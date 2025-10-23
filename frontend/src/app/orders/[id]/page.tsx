@@ -1,14 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { apiClient, Order } from '@/lib/apiClient';
 import { useOrderSocket } from '@/hooks/useSocket';
+import { useRuntimeConfig } from '@/providers/RuntimeConfigProvider';
 
 export default function OrderStatusPage() {
   const params = useParams();
   const orderId = params.id as string;
+  const { loading: configLoading } = useRuntimeConfig();
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -17,16 +19,35 @@ export default function OrderStatusPage() {
   // WebSocketによるリアルタイム更新
   const { socket, isConnected } = useOrderSocket(orderId);
 
-  useEffect(() => {
-    if (orderId) {
-      loadOrder();
-      // WebSocketが接続されていない場合のみポーリング
-      if (!isConnected) {
-        const interval = setInterval(loadOrder, 5000);
-        return () => clearInterval(interval);
-      }
+  const loadOrder = useCallback(async () => {
+    if (!orderId) return;
+
+    try {
+      const data = await apiClient.getOrder(orderId);
+      setOrder(data);
+      setError(null);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : '注文情報の取得に失敗しました'
+      );
+    } finally {
+      setLoading(false);
     }
-  }, [orderId, isConnected]);
+  }, [orderId]);
+
+  useEffect(() => {
+    if (!orderId || configLoading) {
+      return;
+    }
+
+    loadOrder();
+
+    // WebSocketが接続されていない場合のみポーリング
+    if (!isConnected) {
+      const interval = setInterval(loadOrder, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [orderId, isConnected, configLoading, loadOrder]);
 
   // WebSocketイベントリスナー
   useEffect(() => {
@@ -70,21 +91,7 @@ export default function OrderStatusPage() {
         socket.off('order-ready');
       };
     }
-  }, [socket, orderId]);
-
-  const loadOrder = async () => {
-    try {
-      const data = await apiClient.getOrder(orderId);
-      setOrder(data);
-      setError(null);
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : '注文情報の取得に失敗しました'
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [socket, orderId, loadOrder]);
 
   const getStatusColor = (status: string) => {
     switch (status) {

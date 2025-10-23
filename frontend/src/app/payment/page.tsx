@@ -1,22 +1,20 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiClient, Order } from '@/lib/apiClient';
 import { usePaymentSocket } from '@/hooks/useSocket';
+import { useRuntimeConfig } from '@/providers/RuntimeConfigProvider';
 
 export default function PaymentPage() {
   const router = useRouter();
+  const { loading: configLoading } = useRuntimeConfig();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // WebSocketによるリアルタイム更新
   const { socket, isConnected } = usePaymentSocket();
-
-  useEffect(() => {
-    loadOrders();
-  }, []);
 
   // WebSocketイベントリスナーの設定
   useEffect(() => {
@@ -78,7 +76,7 @@ export default function PaymentPage() {
     };
   }, [socket]);
 
-  const loadOrders = async () => {
+  const loadOrders = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -97,7 +95,13 @@ export default function PaymentPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (!configLoading) {
+      loadOrders();
+    }
+  }, [configLoading, loadOrders]);
 
   const getTotalPrice = (order: Order) => {
     return order.groups.reduce((total, group) => {
