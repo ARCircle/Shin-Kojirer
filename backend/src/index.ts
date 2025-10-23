@@ -65,14 +65,19 @@ const configuredPrefix = normalizePrefix(
   process.env.API_ROUTE_PREFIX ?? process.env.API_BASE_PATH
 );
 
+const apiPrefixes = new Set<string>();
+apiPrefixes.add('');
+
 // Always expose non-prefixed routes for backward compatibility
 registerRoutes('');
 
 // Expose configured prefix when provided, otherwise fall back to /api
 if (configuredPrefix) {
   registerRoutes(configuredPrefix);
+  apiPrefixes.add(configuredPrefix);
 } else if (defaultApiPrefix) {
   registerRoutes(defaultApiPrefix);
+  apiPrefixes.add(defaultApiPrefix);
 }
 
 // 404ハンドラー
@@ -105,7 +110,12 @@ if (process.env.NODE_ENV !== 'test') {
       const server = createServer();
 
       // WebSocketサービスを初期化
-      const websocketService = initializeWebSocketService(server);
+      const websocketPathAliases = Array.from(apiPrefixes)
+        .filter((prefix) => prefix)
+        .map((prefix) => `${prefix}/socket.io`);
+      const websocketService = initializeWebSocketService(server, {
+        pathAliases: websocketPathAliases,
+      });
       logger.info('WebSocket service initialized');
 
       // HonoアプリをHTTPサーバーにアタッチ

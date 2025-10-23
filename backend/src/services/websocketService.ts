@@ -1,5 +1,5 @@
 import { Server as SocketIOServer } from 'socket.io';
-import { Server as HTTPServer } from 'http';
+import { Server as HTTPServer, IncomingMessage } from 'http';
 import { OrderWithGroups, Order, OrderGroupStatus } from '../models/types';
 
 export class WebSocketService {
@@ -209,7 +209,60 @@ export class WebSocketService {
 
 export let websocketService: WebSocketService;
 
-export function initializeWebSocketService(httpServer: HTTPServer) {
+export function initializeWebSocketService(
+  httpServer: HTTPServer,
+  options?: {
+    pathAliases?: string[];
+  }
+) {
+  const pathAliases = options?.pathAliases ?? [];
+
+  const rewriteUrl = (req: IncomingMessage) => {
+    if (!req.url) return;
+
+    for (const rawAlias of pathAliases) {
+      if (!rawAlias) continue;
+
+      const alias =
+        rawAlias !== '/' && rawAlias.endsWith('/')
+          ? rawAlias.slice(0, -1)
+          : rawAlias;
+
+      if (alias === '/socket.io') {
+        continue;
+      }
+
+      const [pathname, search = ''] = req.url.split('?');
+      const aliasMatch =
+        pathname === alias || pathname.startsWith(`${alias}/`);
+
+      if (!aliasMatch) {
+        continue;
+      }
+
+      const extraPath = pathname.slice(alias.length);
+      const normalizedExtraPath =
+        extraPath.length === 0
+          ? ''
+          : extraPath.startsWith('/')
+            ? extraPath
+            : `/${extraPath}`;
+
+      const newPathname = `/socket.io${normalizedExtraPath}`;
+      req.url = search ? `${newPathname}?${search}` : newPathname;
+      break;
+    }
+  };
+
+  if (pathAliases.length > 0) {
+    httpServer.prependListener('request', (req) => {
+      rewriteUrl(req);
+    });
+    httpServer.prependListener('upgrade', (req) => {
+      rewriteUrl(req);
+    });
+  }
+
   websocketService = new WebSocketService(httpServer);
   return websocketService;
 }

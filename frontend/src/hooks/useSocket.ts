@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useMemo } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useRuntimeConfig } from '@/providers/RuntimeConfigProvider';
 
@@ -20,6 +20,26 @@ export function useSocket(options: UseSocketOptions = {}): UseSocketReturn {
   const { config, loading: configLoading } = useRuntimeConfig();
   const { autoConnect = true, serverUrl = config.backendUrl } = options;
 
+  const connectionSettings = useMemo(() => {
+    try {
+      const url = new URL(serverUrl);
+      const origin = `${url.protocol}//${url.host}`;
+      const basePath = url.pathname.replace(/\/+$/, '');
+      const socketPath = `${basePath || ''}/socket.io`;
+      return {
+        origin,
+        path: socketPath.startsWith('/') ? socketPath : `/${socketPath}`,
+      };
+    } catch {
+      return {
+        origin: serverUrl,
+        path: '/socket.io',
+      };
+    }
+  }, [serverUrl]);
+
+  const { origin: socketOrigin, path: socketPath } = connectionSettings;
+
   const socketRef = useRef<Socket | null>(null);
   const isConnectedRef = useRef(false);
 
@@ -29,9 +49,10 @@ export function useSocket(options: UseSocketOptions = {}): UseSocketReturn {
     }
 
     if (!socketRef.current) {
-      socketRef.current = io(serverUrl, {
+      socketRef.current = io(socketOrigin, {
         autoConnect: false,
         transports: ['websocket', 'polling'],
+        path: socketPath,
       });
 
       socketRef.current.on('connect', () => {
@@ -52,7 +73,7 @@ export function useSocket(options: UseSocketOptions = {}): UseSocketReturn {
     if (!socketRef.current.connected) {
       socketRef.current.connect();
     }
-  }, [serverUrl, configLoading]);
+  }, [socketOrigin, socketPath, configLoading]);
 
   const disconnect = useCallback(() => {
     if (socketRef.current) {
@@ -78,7 +99,7 @@ export function useSocket(options: UseSocketOptions = {}): UseSocketReturn {
         isConnectedRef.current = false;
       }
     };
-  }, [autoConnect, serverUrl, configLoading, connect]);
+  }, [autoConnect, socketOrigin, socketPath, configLoading, connect]);
 
   return {
     socket: socketRef.current,
